@@ -1,3 +1,5 @@
+//https://kevinkreuzer.medium.com/advanced-typescript-43331bb4a875
+
 //Intersection Type
 interface Person {
   name: string;
@@ -70,7 +72,6 @@ let idTwo: Id<number> = {
 };
 
 //Utility Types
-
 //Partial
 interface Ticket {
   time?: string;
@@ -88,7 +89,6 @@ function entryTicket(ticket: Required<Ticket>) {}
 entryTicket({ name: "roy", movie: "ironman", time: "morning" });
 
 //Extract
-
 type MovieChar =
   | "Villian"
   | "Hero"
@@ -111,3 +111,64 @@ type bar = flattenArrayType<number[]>;
 type baz = flattenArrayType<string | number>;
 
 //Mapped Type
+interface Character {
+  playAction: () => void;
+  playFantasy: () => void;
+}
+
+type toFlags<Type> = { [Property in keyof Type]: boolean };
+
+type CharFeatures = toFlags<Character>;
+
+//
+type mutable<Type> = {
+  -readonly [Property in keyof Type]: Type[Property];
+}; //remove readonly from type
+
+type MyChar = {
+  readonly name: string;
+  readonly age: number;
+};
+
+type mutableChar = mutable<MyChar>;
+
+//
+type optional<Type> = {
+  [Property in keyof Type]+?: Type[Property];
+}; //make properties optional
+
+type MyChar2 = {
+  name: string;
+  age: number;
+};
+
+type optionalChar = optional<MyChar2>;
+
+//
+type optionalAndMutable<Type> = {
+  -readonly [Property in keyof Type]+?: Type[Property];
+};
+
+type mutableAndMutableChar = optionalAndMutable<MyChar>;
+
+//
+type Setter<T> = {
+  [Property in keyof T as `set${Capitalize<
+    string & Property
+  >}`]: () => T[Property];
+};
+
+type SpeacialChar = {
+  firstName: string;
+  userId: string;
+  age: number;
+};
+
+type MyChar3 = Setter<SpeacialChar>;
+
+//
+type nameOnly<T> = {
+  [Property in keyof T as Exclude<Property, "firstName">]: T[Property];
+};
+
+type MyChar4 = nameOnly<SpeacialChar>;
